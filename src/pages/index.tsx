@@ -1,9 +1,16 @@
-import { DatePicker, Select, Slider } from 'antd';
+import { DatePicker, Pagination, PaginationProps, Select, Slider } from 'antd';
+import Image from 'next/image';
 import * as React from 'react';
 
 import styles from '@/styles/home.module.scss';
 
-import { enumAnimeRating, enumAnimeStatus, enumAnimeType } from '@/lib/types';
+import {
+  animeData,
+  enumAnimeRating,
+  enumAnimeStatus,
+  enumAnimeType,
+  pagination,
+} from '@/lib/types';
 
 import Button from '@/components/buttons/Button';
 import Layout from '@/components/layout/Layout';
@@ -19,34 +26,58 @@ export default function HomePage() {
   const [endDate, setEndDate] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const [query, setQuery] = React.useState('');
+  const [limit, setLimit] = React.useState(20);
+  const [page, setPage] = React.useState(1);
 
-  // const [results, setResults] = React.useState([]);
+  const [results, setResults] = React.useState<{
+    data: animeData[];
+    pagination: pagination;
+  } | null>(null);
 
-  const handleButtonClick = () => {
-    setLoading(true);
+  const onShowSizeChange: PaginationProps['onShowSizeChange'] = (
+    current: number,
+    pageSize: number
+  ) => {
+    setPage(current);
+    setLimit(pageSize);
+    refreshAnime();
+  };
+
+  const handlePagination = (page: number, pageSize: number) => {
+    setPage(page);
+    setLimit(pageSize);
+    refreshAnime();
+  };
+
+  const refreshAnime = () => {
     const endpoint =
       'https://api.jikan.moe/v4/anime?q=' +
       query +
       (animeType !== '' ? '&type=' + animeType : '') +
       (animeStatus !== '' ? '&status=' + animeStatus : '') +
       (animeRating !== '' ? '&rating=' + animeRating : '') +
-      '&min_score=' +
-      score[0] +
-      '&max_score' +
-      score[1] +
+      ('&min_score=' + score[0]) +
+      ('&max_score' + score[1]) +
       (startDate !== '' ? '&start_date=' + startDate : '') +
-      (endDate !== '' ? '&end_date=' + endDate : '');
+      (endDate !== '' ? '&end_date=' + endDate : '') +
+      ('&limit=' + limit) +
+      ('&page=' + page) +
+      '&order_by=mal_id';
 
     fetch(endpoint)
       .then((res) => res.json())
-      .then(() => {
-        // setResults(data)
+      .then((data) => {
+        setResults(data);
 
         setLoading(false);
       })
       .catch(() => {
         setLoading(false);
       });
+  };
+  const handleButtonClick = () => {
+    setLoading(true);
+    refreshAnime();
   };
 
   return (
@@ -139,7 +170,57 @@ export default function HomePage() {
               />
             </div>
           </div>
-          <div className={styles.results}></div>
+          <div className={styles.results}>
+            {results && (
+              <div className={styles.header}>
+                <div className={styles.no}>No</div>
+                <div className={styles.animeData}>Title</div>
+              </div>
+            )}
+            {results &&
+              results.data.map((anime, index) => (
+                <div className={styles.content} key={anime.mal_id}>
+                  <div className={styles.no}>
+                    {index + 1 + limit * (page - 1)}
+                  </div>
+                  <div className={styles.animeData}>
+                    <Image
+                      src={anime.images.jpg.image_url}
+                      alt='anime'
+                      width={150}
+                      height={225}
+                    />
+
+                    <div className={styles.animeDetails}>
+                      <div>
+                        <h3 className={styles.title}>{anime.title}</h3>
+                        <div className={styles.episode}>
+                          {anime.type} {anime.episodes}{' '}
+                          {anime.episodes > 1 ? 'episodes' : 'episode'}
+                        </div>
+                        <div className={styles.synopsis}>{anime.synopsis}</div>
+                      </div>
+                      <div className={styles.member}>
+                        {anime.members}{' '}
+                        {anime.members > 1 ? 'members' : 'member'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+            {results && (
+              <div className={styles.pagination}>
+                <Pagination
+                  showSizeChanger
+                  onShowSizeChange={onShowSizeChange}
+                  defaultCurrent={1}
+                  onChange={handlePagination}
+                  total={Math.ceil(results.pagination.items.total / limit)}
+                />
+              </div>
+            )}
+          </div>
         </section>
       </main>
     </Layout>

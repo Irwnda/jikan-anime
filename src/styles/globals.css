@@ -157,3 +157,8 @@ button.ant-picker-year-btn,
   background-color: inherit;
   color: white;
 }
+
+.ant-pagination-item-link {
+  background-color: rgb(16, 22, 36);
+  color: white;
+}
