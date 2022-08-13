@@ -1,0 +1,82 @@
+.anime {
+  display: flex;
+  width: 100%;
+  color: white;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: white;
+  }
+
+  .sidebar {
+    width: 20%;
+  }
+  .main {
+    width: 80%;
+
+    .mainInfo {
+      display: flex;
+      width: 100%;
+      background-color: rgb(10, 16, 30);
+      padding: 8px;
+
+      .score {
+        padding: 4px;
+        width: 100px;
+        text-align: center;
+        border-right: 1px solid rgb(229, 231, 235);
+
+        .scoreText {
+          text-transform: uppercase;
+        }
+        .scoreValue {
+          font-size: 1.5rem;
+        }
+        .users {
+          font-size: 0.75rem;
+        }
+      }
+
+      .info {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 4px;
+        width: calc(100% - 100px);
+
+        .topInfo {
+          display: flex;
+          justify-content: space-around;
+          font-size: 1.75rem;
+        }
+
+        .bottomInfo {
+          margin-left: 1rem;
+          display: flex;
+          gap: 8px;
+          font-size: 0.75rem;
+
+          .season {
+            border-right: 1px solid rgb(229, 231, 235);
+            margin: 4px;
+            padding-right: 8px;
+            line-height: 12px;
+          }
+        }
+      }
+    }
+
+    .youtube {
+      width: fit-content;
+      margin: 1rem auto;
+    }
+
+    .synopsis {
+      margin-bottom: 1rem;
+    }
+  }
+}

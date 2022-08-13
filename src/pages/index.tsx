@@ -14,6 +14,7 @@ import {
 
 import Button from '@/components/buttons/Button';
 import Layout from '@/components/layout/Layout';
+import UnstyledLink from '@/components/links/UnstyledLink';
 
 const { Option } = Select;
 
@@ -26,7 +27,7 @@ export default function HomePage() {
   const [endDate, setEndDate] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const [query, setQuery] = React.useState('');
-  const [limit, setLimit] = React.useState(20);
+  const [limit, setLimit] = React.useState(10);
   const [page, setPage] = React.useState(1);
 
   const [results, setResults] = React.useState<{
@@ -186,14 +187,16 @@ export default function HomePage() {
                   <div className={styles.animeData}>
                     <Image
                       src={anime.images.jpg.image_url}
-                      alt='anime'
+                      alt={anime.title + ' image'}
                       width={150}
                       height={225}
                     />
 
                     <div className={styles.animeDetails}>
                       <div>
-                        <h3 className={styles.title}>{anime.title}</h3>
+                        <UnstyledLink href={'/anime/' + anime.mal_id}>
+                          <h3 className={styles.title}>{anime.title}</h3>
+                        </UnstyledLink>
                         <div className={styles.episode}>
                           {anime.type} {anime.episodes}{' '}
                           {anime.episodes > 1 ? 'episodes' : 'episode'}

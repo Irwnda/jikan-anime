@@ -10,6 +10,16 @@ module.exports = {
     domains: ['via.placeholder.com', 'cdn.myanimelist.net'],
   },
 
+  async redirects() {
+    return [
+      {
+        source: '/anime',
+        destination: '/',
+        permanent: true,
+      },
+    ];
+  },
+
   // SVGR
   webpack(config) {
     config.module.rules.push({
