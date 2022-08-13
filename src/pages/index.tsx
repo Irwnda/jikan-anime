@@ -1,72 +1,145 @@
+import { DatePicker, Select, Slider } from 'antd';
 import * as React from 'react';
 
+import styles from '@/styles/home.module.scss';
+
+import { enumAnimeRating, enumAnimeStatus, enumAnimeType } from '@/lib/types';
+
+import Button from '@/components/buttons/Button';
 import Layout from '@/components/layout/Layout';
-import ArrowLink from '@/components/links/ArrowLink';
-import ButtonLink from '@/components/links/ButtonLink';
-import UnderlineLink from '@/components/links/UnderlineLink';
-import UnstyledLink from '@/components/links/UnstyledLink';
-import Seo from '@/components/Seo';
 
-/**
- * SVGR Support
- * Caveat: No React Props Type.
- *
- * You can override the next-env if the type is important to you
- * @see https://stackoverflow.com/questions/68103844/how-to-override-next-js-svg-module-declaration
- */
-import Vercel from '~/svg/Vercel.svg';
-
-// !STARTERCONF -> Select !STARTERCONF and CMD + SHIFT + F
-// Before you begin editing, follow all comments with `STARTERCONF`,
-// to customize the default configuration.
+const { Option } = Select;
 
 export default function HomePage() {
+  const [animeType, setAnimeType] = React.useState('');
+  const [animeStatus, setAnimeStatus] = React.useState('');
+  const [animeRating, setAnimeRating] = React.useState('');
+  const [score, setScore] = React.useState([0, 10]);
+  const [startDate, setStartDate] = React.useState('');
+  const [endDate, setEndDate] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
+  const [query, setQuery] = React.useState('');
+
+  // const [results, setResults] = React.useState([]);
+
+  const handleButtonClick = () => {
+    setLoading(true);
+    const endpoint =
+      'https://api.jikan.moe/v4/anime?q=' +
+      query +
+      (animeType !== '' ? '&type=' + animeType : '') +
+      (animeStatus !== '' ? '&status=' + animeStatus : '') +
+      (animeRating !== '' ? '&rating=' + animeRating : '') +
+      '&min_score=' +
+      score[0] +
+      '&max_score' +
+      score[1] +
+      (startDate !== '' ? '&start_date=' + startDate : '') +
+      (endDate !== '' ? '&end_date=' + endDate : '');
+
+    fetch(endpoint)
+      .then((res) => res.json())
+      .then(() => {
+        // setResults(data)
+
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  };
+
   return (
     <Layout>
-      {/* <Seo templateTitle='Home' /> */}
-      <Seo />
-
-      <main>
-        <section className='bg-white'>
-          <div className='layout flex min-h-screen flex-col items-center justify-center text-center'>
-            <Vercel className='text-5xl' />
-            <h1 className='mt-4'>
-              Next.js + Tailwind CSS + TypeScript Starter
-            </h1>
-            <p className='mt-2 text-sm text-gray-800'>
-              A starter for Next.js, Tailwind CSS, and TypeScript with Absolute
-              Import, Seo, Link component, pre-configured with Husky{' '}
-            </p>
-            <p className='mt-2 text-sm text-gray-700'>
-              <ArrowLink href='https://github.com/theodorusclarence/ts-nextjs-tailwind-starter'>
-                See the repository
-              </ArrowLink>
-            </p>
-
-            <ButtonLink className='mt-6' href='/components' variant='light'>
-              See all components
-            </ButtonLink>
-
-            <UnstyledLink
-              href='https://vercel.com/new/git/external?repository-url=https%3A%2F%2Fgithub.com%2Ftheodorusclarence%2Fts-nextjs-tailwind-starter'
-              className='mt-4'
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                width='92'
-                height='32'
-                src='https://vercel.com/button'
-                alt='Deploy with Vercel'
+      <main className='layout'>
+        <header>
+          <h1>Jikan Anime</h1>
+        </header>
+        <section className={styles.home}>
+          <div className={styles.input}>
+            <div className={styles.inputGroup}>
+              <input
+                type='text'
+                placeholder='Search anime title'
+                value={query}
+                onChange={(e) => setQuery(e.currentTarget.value)}
+              />{' '}
+              <Button
+                variant='dark'
+                onClick={handleButtonClick}
+                isLoading={loading}
+              >
+                Search
+              </Button>
+            </div>
+            <div className={styles.filter}>
+              <Select
+                placeholder='Anime Type'
+                onChange={(value) => setAnimeType(value)}
+                className={styles.dropdown}
+                dropdownClassName={styles.dropdownMenu}
+                allowClear
+              >
+                {Object.keys(enumAnimeType).map((key) => (
+                  <Option value={key} key={key}>
+                    {enumAnimeType[key as keyof typeof enumAnimeType]}
+                  </Option>
+                ))}
+              </Select>
+              <Select
+                placeholder='Anime Status'
+                onChange={(value) => setAnimeStatus(value)}
+                className={styles.dropdown}
+                dropdownClassName={styles.dropdownMenu}
+                allowClear
+              >
+                {Object.keys(enumAnimeStatus).map((key) => (
+                  <Option value={key} key={key}>
+                    {enumAnimeStatus[key as keyof typeof enumAnimeStatus]}
+                  </Option>
+                ))}
+              </Select>
+              <Select
+                placeholder='Anime Rating'
+                allowClear
+                onChange={(value) => setAnimeRating(value)}
+                className={styles.dropdown}
+                style={{ width: '250px' }}
+                dropdownClassName={styles.dropdownMenu}
+              >
+                {Object.keys(enumAnimeRating).map((key) => (
+                  <Option value={key} key={key}>
+                    {enumAnimeRating[key as keyof typeof enumAnimeRating]}
+                  </Option>
+                ))}
+              </Select>
+              <div className={styles.sliderParent}>
+                Score
+                <Slider
+                  range
+                  defaultValue={[0, 10]}
+                  min={0}
+                  max={10}
+                  step={0.1}
+                  className={styles.slider}
+                  onChange={(e) => setScore(e)}
+                />
+              </div>
+              <DatePicker
+                onChange={(value) => setStartDate(value?.toString() as string)}
+                className={styles.dropdown}
+                placeholder='Start Date'
+                dropdownClassName={styles.dropdownMenu}
               />
-            </UnstyledLink>
-
-            <footer className='absolute bottom-2 text-gray-700'>
-              © {new Date().getFullYear()} By{' '}
-              <UnderlineLink href='https://theodorusclarence.com?ref=tsnextstarter'>
-                Theodorus Clarence
-              </UnderlineLink>
-            </footer>
+              <DatePicker
+                onChange={(value) => setEndDate(value?.toString() as string)}
+                className={styles.dropdown}
+                placeholder='End Date'
+                dropdownClassName={styles.dropdownMenu}
+              />
+            </div>
           </div>
+          <div className={styles.results}></div>
         </section>
       </main>
     </Layout>

@@ -4,7 +4,6 @@
 
 :root {
   /* #region  /**=========== Primary Color =========== */
-  /* !STARTERCONF Customize these variable, copy and paste from /styles/colors.css for list of colors */
   --tw-color-primary-50: 240 249 255;
   --tw-color-primary-100: 224 242 254;
   --tw-color-primary-200: 186 230 253;
@@ -115,4 +114,46 @@
   .animated-underline:focus-visible {
     background-size: 0 2px, 100% 2px;
   }
+}
+
+body {
+  background-color: rgb(7, 13, 27) !important;
+}
+
+header h1 {
+  text-align: center;
+  color: white;
+  margin: 1rem 0;
+}
+
+.ant-select-arrow {
+  color: white;
+}
+
+.ant-select-item {
+  color: inherit;
+}
+
+.ant-select-item:hover,
+.ant-select-item-option-active {
+  color: initial;
+}
+
+.ant-picker-suffix {
+  color: inherit;
+}
+
+.ant-picker-header button,
+.ant-picker-cell {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.ant-picker-panel-container,
+.ant-picker-cell-in-view,
+.ant-picker-content th,
+button.ant-picker-month-btn,
+button.ant-picker-year-btn,
+.ant-picker-input > input {
+  background-color: inherit;
+  color: white;
 }
